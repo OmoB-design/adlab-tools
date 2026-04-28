@@ -1,13 +1,13 @@
 'use client'
 
 import { Fragment } from 'react'
-import { Check, Circle } from 'lucide-react'
+import { Circle } from 'lucide-react'
 import Link from 'next/link'
 
 const steps = [
-  { title: 'Ad spend',  desc: 'Tell us how much you spend on ads' },
-  { title: 'ROAS',      desc: 'Tell us about your business' },
-  { title: 'Platform',  desc: "Tell us the platforms you're on" },
+  { title: 'Ad spend',  desc: 'Tell us how much you spend on ads',  href: '/ad-spend' },
+  { title: 'ROAS',      desc: 'Tell us about your business',        href: '/roas' },
+  { title: 'Platform',  desc: "Tell us the platforms you're on",    href: '/platform' },
 ]
 
 const summaryQuestions = [
@@ -29,7 +29,7 @@ interface LeftPanelProps {
   summary?: SummaryData
 }
 
-type StepState = 'done' | 'active' | 'upcoming' | 'all-light'
+type StepState = 'done' | 'active' | 'upcoming'
 
 function getStepState(i: number, currentView: string): StepState {
   if (currentView === 'step1') {
@@ -41,9 +41,18 @@ function getStepState(i: number, currentView: string): StepState {
     return 'upcoming'
   }
   if (currentView === 'step3') {
-    return 'all-light'
+    if (i <= 1) return 'done'
+    return 'active'
   }
   return 'upcoming'
+}
+
+function StepCheckIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="22" height="22" viewBox="0 0 18 18" className="flex-none">
+      <path d="M9,1C4.589,1,1,4.589,1,9s3.589,8,8,8,8-3.589,8-8S13.411,1,9,1Zm3.947,5.641c-1.859,1.382-3.435,3.29-4.683,5.669-.129,.247-.385,.402-.664,.402-.277,.003-.538-.157-.667-.407-.575-1.117-1.218-2.025-1.965-2.776-.292-.293-.291-.769,.003-1.061,.292-.292,.768-.292,1.061,.003,.573,.576,1.09,1.228,1.563,1.972,1.239-2.045,2.734-3.726,4.458-5.007,.332-.246,.802-.178,1.049,.155,.247,.332,.178,.802-.155,1.049Z" fill="#1c1f21"/>
+    </svg>
+  )
 }
 
 function BlueBadge({ size = 16 }: { size?: number }) {
@@ -107,7 +116,6 @@ export default function LeftPanel({ currentView, summary }: LeftPanelProps) {
                   key={i}
                   className={`relative flex items-center gap-(--space-10) overflow-hidden rounded-(--radius-4xl) border border-(--color-surface-stroke) px-[15px] py-(--space-14) shadow-[0px_2px_10px_0px_rgba(221,221,221,0.25)] ${dim ? 'bg-(--color-surface-fg-01)' : 'bg-(--color-surface-primary)'}`}
                 >
-                  {/* Blue badge icon — 40×40 */}
                   <div className="flex size-[40px] flex-none items-center justify-center">
                     <BlueBadge size={40} />
                   </div>
@@ -137,27 +145,19 @@ export default function LeftPanel({ currentView, summary }: LeftPanelProps) {
             {steps.map((step, i) => {
               const state = getStepState(i, currentView)
               const isDark = state === 'done' || state === 'active'
+              const nextState = i < steps.length - 1 ? getStepState(i + 1, currentView) : null
+              const lineIsDark = nextState !== null && nextState !== 'upcoming'
 
               return (
                 <Fragment key={i}>
-                  <div className="flex h-[39px] items-start gap-(--space-16)">
-                    <div
-                      className={`flex size-[30px] flex-none items-center justify-center rounded-full ${
-                        isDark
-                          ? 'bg-(--color-grey-950)'
-                          : state === 'all-light'
-                            ? 'bg-(--color-surface-stroke)'
-                            : 'bg-(--color-surface-fg-01) border border-(--color-surface-stroke)'
-                      }`}
-                    >
-                      {state === 'done' && (
-                        <Check size={14} className="text-(--color-white)" />
-                      )}
-                      {state === 'active' && (
-                        <Circle size={14} className="text-(--color-white)" />
-                      )}
-                      {(state === 'upcoming' || state === 'all-light') && (
-                        <Circle size={14} className="text-(--color-grey-400)" />
+                  <Link href={step.href} className="flex h-[39px] items-start gap-(--space-16)">
+                    <div className="flex size-[30px] flex-none items-center justify-center">
+                      {isDark ? (
+                        <StepCheckIcon />
+                      ) : (
+                        <div className="flex size-full items-center justify-center rounded-full bg-(--color-surface-fg-01) border border-(--color-surface-stroke)">
+                          <Circle size={14} className="text-(--color-grey-400)" />
+                        </div>
                       )}
                     </div>
                     <div className="flex flex-col gap-(--space-4)">
@@ -168,10 +168,16 @@ export default function LeftPanel({ currentView, summary }: LeftPanelProps) {
                         {step.desc}
                       </p>
                     </div>
-                  </div>
+                  </Link>
 
                   {i < steps.length - 1 && (
-                    <div className="ml-[15px] h-[27px] w-px border-l border-dashed border-(--color-grey-150)" />
+                    <div
+                      className={`ml-[15px] h-[27px] w-px border-l ${
+                        lineIsDark
+                          ? 'border-solid border-(--color-grey-850)'
+                          : 'border-dashed border-(--color-grey-150)'
+                      }`}
+                    />
                   )}
                 </Fragment>
               )

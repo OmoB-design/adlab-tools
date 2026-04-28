@@ -15,7 +15,6 @@ function RoasContent() {
   const searchParams = useSearchParams()
   const adSpend = searchParams.get('adSpend') ?? '0'
 
-  const [mode, setMode] = useState<'know' | 'calculate'>('know')
   const [roas, setRoas] = useState('')
   const router = useRouter()
 
@@ -106,66 +105,33 @@ function RoasContent() {
                 </p>
               </div>
 
-              {/* Toggle + input + button */}
+              {/* Input + button */}
               <div className="flex flex-col gap-(--space-32)">
 
-                {/* Segmented toggle — delay 0.45s */}
+                {/* ROAS input — delay 0.45s */}
                 <div
-                  className="animate-fade-in-up flex h-[54px] w-full items-center overflow-hidden rounded-[14px] border border-(--color-surface-stroke) bg-(--color-surface-primary) p-(--space-10) shadow-(--shadow-surface)"
+                  className="animate-fade-in-up flex w-full items-center gap-(--space-8) rounded-(--radius-xl) border border-(--color-surface-stroke) bg-(--color-surface-primary) px-[14px] py-(--space-14) shadow-(--shadow-input) transition-[border-color,box-shadow] duration-150 ease-in-out focus-within:border-(--color-purple-400) focus-within:shadow-[0px_0px_0px_2px_rgba(202,93,236,0.15)]"
                   style={{ animationDelay: '0.45s' }}
                 >
-                  <button
-                    type="button"
-                    onClick={() => setMode('know')}
-                    className={`flex h-full flex-1 items-center justify-center rounded-(--radius-lg) px-(--space-10) text-caption-2 font-medium leading-tight whitespace-nowrap transition-all duration-150 ${
-                      mode === 'know'
-                        ? 'bg-(--color-btn-dark-bg) text-(--color-white) shadow-(--shadow-soft)'
-                        : 'text-(--color-text-heading-01)'
-                    }`}
-                  >
-                    I know my ROAS
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setMode('calculate')}
-                    className={`flex h-full flex-1 items-center justify-center rounded-(--radius-lg) px-(--space-10) text-caption-2 font-medium leading-tight whitespace-nowrap transition-all duration-150 ${
-                      mode === 'calculate'
-                        ? 'bg-(--color-btn-dark-bg) text-(--color-white) shadow-(--shadow-soft)'
-                        : 'text-(--color-text-heading-01)'
-                    }`}
-                  >
-                    Calculate it for me
-                  </button>
+                  <TrendingUp size={14} className="flex-none text-(--color-grey-400)" />
+                  <input
+                    type="text"
+                    value={roas}
+                    onChange={(e) => setRoas(e.target.value)}
+                    placeholder="e.g. 3.5"
+                    className="flex-1 bg-transparent text-caption-1 font-medium leading-tight text-(--color-text-heading-02) outline-none placeholder:text-(--color-grey-400)"
+                  />
                 </div>
 
-                {/* Input + Next button */}
-                <div className="flex flex-col gap-(--space-32)">
-
-                  {/* ROAS input — delay 0.45s */}
-                  <div
-                    className="animate-fade-in-up flex w-full items-center gap-(--space-8) rounded-(--radius-xl) border border-(--color-surface-stroke) bg-(--color-surface-primary) px-[14px] py-(--space-14) shadow-(--shadow-input) transition-[border-color,box-shadow] duration-150 ease-in-out focus-within:border-(--color-purple-400) focus-within:shadow-[0px_0px_0px_2px_rgba(202,93,236,0.15)]"
-                    style={{ animationDelay: '0.45s' }}
-                  >
-                    <TrendingUp size={14} className="flex-none text-(--color-grey-400)" />
-                    <input
-                      type="text"
-                      value={roas}
-                      onChange={(e) => setRoas(e.target.value)}
-                      placeholder="e.g. 3.5"
-                      className="flex-1 bg-transparent text-caption-1 font-medium leading-tight text-(--color-text-heading-02) outline-none placeholder:text-(--color-grey-400)"
-                    />
-                  </div>
-
-                  {/* Next button — delay 0.60s */}
-                  <button
-                    type="button"
-                    onClick={handleNext}
-                    className="animate-fade-in-up w-full rounded-(--radius-lg) bg-(--color-btn-primary-bg) px-(--space-12) py-(--space-14) text-center text-caption-1 font-medium leading-tight text-(--color-btn-primary-text) shadow-(--shadow-soft) transition-shadow duration-150 active:shadow-(--shadow-inset-sm)"
-                    style={{ animationDelay: '0.60s' }}
-                  >
-                    Next
-                  </button>
-                </div>
+                {/* Next button — delay 0.60s */}
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  className="animate-fade-in-up w-full rounded-(--radius-lg) bg-(--color-btn-primary-bg) px-(--space-12) py-(--space-14) text-center text-caption-1 font-medium leading-tight text-(--color-btn-primary-text) shadow-(--shadow-soft) transition-shadow duration-150 active:shadow-(--shadow-inset-sm)"
+                  style={{ animationDelay: '0.60s' }}
+                >
+                  Next
+                </button>
               </div>
             </div>
           </div>

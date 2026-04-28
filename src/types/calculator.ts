@@ -3,7 +3,7 @@
 // =============================================================================
 
 /** Which ad platform the brand is running (shown on Step 1) */
-export type Platform = 'google' | 'meta' | 'tiktok' | 'linkedin' | 'other';
+export type Platform = 'google' | 'meta' | 'both' | 'neither' | 'tiktok' | 'linkedin' | 'other';
 
 /** The three inputs collected across three calculator steps */
 export interface CalculatorInputs {

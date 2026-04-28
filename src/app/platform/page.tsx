@@ -112,7 +112,7 @@ function PlatformContent() {
                 <p className="font-display text-h4 font-medium leading-tight text-(--color-text-heading-01)">
                   Where are you currently running ads?
                 </p>
-                <p className="font-sans text-caption-1 font-medium leading-tight text-(--color-text-heading-05)">
+                <p className="font-sans text-caption-1 font-medium leading-tight text-(--color-text-heading-06)">
                   Tell us where you run your ads
                 </p>
               </div>

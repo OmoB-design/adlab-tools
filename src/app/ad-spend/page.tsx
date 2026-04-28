@@ -97,7 +97,7 @@ export default function AdSpendPage() {
                 <p className="font-display text-h4 font-medium leading-tight text-(--color-text-heading-01)">
                   What's your current monthly ad spend?
                 </p>
-                <p className="font-sans text-body font-medium leading-body text-(--color-text-body)">
+                <p className="font-sans text-caption-1 font-medium leading-tight text-(--color-text-heading-06)">
                   Include all platforms - Google, Meta, TikTok, and any others.
                 </p>
               </div>

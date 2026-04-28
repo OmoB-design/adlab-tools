@@ -3,7 +3,6 @@
 import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import LeftPanel from '@/components/left-panel'
-import { saveLead } from '@/lib/supabase'
 import { calculateRevenue } from '@/lib/calculations'
 
 const platformLabels: Record<string, string> = {
@@ -44,17 +43,16 @@ function DetailsContent() {
         currentRoas:  roasRaw,
         platform:     platformKey as 'google',
       })
-      await saveLead({
-        fullName,
-        email,
-        consented,
-        adSpend:          adSpendRaw,
-        roas:             roasRaw,
-        platform:         platformKey,
-        currentRevenue:   results.currentRevenue,
-        projectedRevenue: results.projectedRevenue,
-        monthlyGap:       results.monthlyGap,
-        annualGap:        results.annualGap,
+      await fetch('/api/calculator/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: fullName,
+          email,
+          consented,
+          inputs: { monthlySpend: adSpendRaw, currentRoas: roasRaw, platform: platformKey },
+          results,
+        }),
       })
     } catch {
       // non-blocking — still navigate to results
@@ -68,6 +66,7 @@ function DetailsContent() {
     adSpend:  fmt(adSpendRaw),
     roas:     `${roasRaw}x`,
     platform: platformLabels[platformKey] ?? platformKey,
+    dim:      true,
   }
 
   return (
@@ -98,7 +97,7 @@ function DetailsContent() {
               <p className="font-display text-h4 font-medium leading-tight text-(--color-text-heading-01)">
                 Almost there!
               </p>
-              <p className="font-sans text-caption-1 font-medium leading-tight text-(--color-text-heading-05)">
+              <p className="font-sans text-caption-1 font-medium leading-tight text-(--color-text-heading-06)">
                 Where should we send your full breakdown?
               </p>
             </div>

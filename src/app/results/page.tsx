@@ -2,40 +2,104 @@
 
 import { Suspense, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { motion, animate } from 'framer-motion'
 import LeftPanel from '@/components/left-panel'
 import { calculateRevenue } from '@/lib/calculations'
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
 const platformLabels: Record<string, string> = {
-  google:  'Google only',
-  meta:    'Meta only',
-  both:    'Both',
-  neither: 'Neither',
+  google:   'Google only',
+  meta:     'Meta only',
+  both:     'Both',
+  neither:  'Neither',
+  tiktok:   'TikTok',
+  linkedin: 'LinkedIn',
+  other:    'Other',
 }
 
-function fmt(n: number) {
-  return `$${n.toLocaleString('en-US', { maximumFractionDigits: 0 })}`
+function fmtRaw(n: number) {
+  return n.toLocaleString('en-US', { maximumFractionDigits: 0 })
 }
 
-function fmtMonth(n: number) {
-  return `${fmt(n)}/mo`
+// ─── Animated Number Counter ───────────────────────────────────────────────────
+
+interface AnimatedNumberProps {
+  target:   number
+  prefix?:  string
+  suffix?:  string
+  delay?:   number
+  duration?: number
+  className?: string
 }
 
-function generateInsight(platform: string, roas: number, adSpend: number): string {
-  const spendK = Math.round(adSpend / 1000)
-  if (platform === 'meta') {
-    return `Running Meta-only at ${roas}x ROAS while ignoring Google means you're missing the highest-intent buyers in your category. Our clients in your spend range see an average 8.78x ROAS on Google within 90 days.`
-  }
-  if (platform === 'google') {
-    return `At ${roas}x ROAS on a $${spendK}k/mo budget, you're leaving significant revenue on the table. Our clients at this spend level consistently achieve 8.78x ROAS with the right optimisation strategy. The gap is fixable.`
-  }
-  if (platform === 'both') {
-    return `Running both Google and Meta at ${roas}x blended ROAS shows clear room for improvement. Ad-Lab clients in your spend range achieve 8.78x on Google alone — the right allocation and bidding strategy makes all the difference.`
-  }
-  return `At ${roas}x ROAS, there's a clear opportunity to grow. Ad-Lab clients in your spend range see an average 8.78x ROAS within 90 days of working with us.`
+function AnimatedNumber({
+  target,
+  prefix  = '$',
+  suffix  = '',
+  delay   = 0,
+  duration = 1.8,
+  className,
+}: AnimatedNumberProps) {
+  const [display, setDisplay] = useState(0)
+
+  useEffect(() => {
+    setDisplay(0)
+
+    const timer = setTimeout(() => {
+      const controls = animate(0, target, {
+        duration,
+        ease: 'easeOut',
+        onUpdate: (v) => setDisplay(Math.round(v)),
+      })
+      return () => controls.stop()
+    }, delay * 1000)
+
+    return () => clearTimeout(timer)
+  }, [target, delay, duration])
+
+  return (
+    <span className={className}>
+      {prefix}{fmtRaw(display)}{suffix}
+    </span>
+  )
 }
+
+// ─── Insight Shimmer Skeleton ──────────────────────────────────────────────────
+
+function InsightSkeleton() {
+  return (
+    <div className="flex flex-col gap-[6px]">
+      <div className="skeleton-shimmer h-[12px] w-full rounded-full" />
+      <div className="skeleton-shimmer h-[12px] w-[94%] rounded-full" />
+      <div className="skeleton-shimmer h-[12px] w-[80%] rounded-full" />
+    </div>
+  )
+}
+
+// ─── Animation variants ────────────────────────────────────────────────────────
+// Scoped to the split-card content only. Left column leads, right column follows.
+// Pass absolute delay (seconds) via `custom`. Blur clears on expo-out bezier.
+
+const fadeUp = {
+  hidden:  { opacity: 0, filter: 'blur(5px)', y: 8 },
+  visible: (delay: number) => ({
+    opacity: 1,
+    filter:  'blur(0px)',
+    y:       0,
+    transition: {
+      delay,
+      duration: 0.48,
+      ease:     [0.22, 1, 0.36, 1] as const,
+    },
+  }),
+}
+
+// ─── Main Content ──────────────────────────────────────────────────────────────
 
 function ResultsContent() {
-  const searchParams  = useSearchParams()
+  const searchParams = useSearchParams()
+
   const adSpendRaw  = parseFloat(searchParams.get('adSpend')  ?? '0') || 0
   const roasRaw     = parseFloat(searchParams.get('roas')     ?? '0') || 0
   const platformKey = searchParams.get('platform') ?? 'google'
@@ -45,24 +109,49 @@ function ResultsContent() {
     currentRoas:  roasRaw,
     platform:     platformKey as 'google',
   })
-  const annualCurrentRevenue = results.currentRevenue * 12
-  const insight = generateInsight(platformKey, roasRaw, adSpendRaw)
 
-  // ── Resizable split panel ────────────────────────────────────────────────
-  const [leftPct, setLeftPct]     = useState(50)
-  const containerRef              = useRef<HTMLDivElement>(null)
-  const isDragging                = useRef(false)
+  const annualCurrentRevenue = results.currentRevenue * 12
+
+  // Claude insight
+  const [insight, setInsight]           = useState<string | null>(null)
+  const [insightError, setInsightError] = useState(false)
+
+  useEffect(() => {
+    if (adSpendRaw === 0 || roasRaw === 0) return
+
+    fetch('/api/calculate', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        monthlySpend: adSpendRaw,
+        currentRoas:  roasRaw,
+        platform:     platformKey,
+      }),
+    })
+      .then((r) => r.json())
+      .then((json) => {
+        if (json.success && json.data?.aiInsight) {
+          setInsight(json.data.aiInsight)
+        } else {
+          setInsightError(true)
+        }
+      })
+      .catch(() => setInsightError(true))
+  }, [adSpendRaw, roasRaw, platformKey])
+
+  // ── Resizable split panel ──────────────────────────────────────────────────
+  const [leftPct, setLeftPct] = useState(50)
+  const containerRef           = useRef<HTMLDivElement>(null)
+  const isDragging             = useRef(false)
 
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
       if (!isDragging.current || !containerRef.current) return
       const rect = containerRef.current.getBoundingClientRect()
-      const x    = e.clientX - rect.left
-      const pct  = Math.min(Math.max((x / rect.width) * 100, 25), 75)
+      const pct  = Math.min(Math.max(((e.clientX - rect.left) / rect.width) * 100, 25), 75)
       setLeftPct(pct)
     }
     const onUp = () => { isDragging.current = false }
-
     document.addEventListener('mousemove', onMove)
     document.addEventListener('mouseup',   onUp)
     return () => {
@@ -75,40 +164,43 @@ function ResultsContent() {
     e.preventDefault()
     isDragging.current = true
   }
-  // ────────────────────────────────────────────────────────────────────────
+  // ──────────────────────────────────────────────────────────────────────────
 
   const summary = {
-    adSpend:  fmt(adSpendRaw),
+    adSpend:  `$${fmtRaw(adSpendRaw)}`,
     roas:     `${roasRaw}x`,
     platform: platformLabels[platformKey] ?? platformKey,
     dim:      true,
   }
+
+  const bookingUrl = process.env.NEXT_PUBLIC_BOOKING_URL ?? '#'
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-(--color-surface-fg-01)">
 
       <LeftPanel currentView="summary" summary={summary} />
 
-      {/* Right panel */}
+      {/* Right panel — always visible, animations live only inside the split card */}
       <main className="relative flex flex-1 flex-col overflow-hidden rounded-bl-(--radius-6xl) rounded-tl-(--radius-6xl) border border-(--color-surface-stroke) bg-(--color-surface-primary) shadow-(--shadow-panel)">
 
         <div className="flex flex-1 flex-col items-start gap-(--space-50) overflow-y-auto px-(--space-120) pt-(--space-120) pb-(--space-64)">
 
-          {/* Notification tag */}
+          {/* ── Notification tag — static ── */}
           <div className="px-(--space-0) py-(--space-12)">
             <div className="inline-flex shrink-0 items-center justify-center rounded-[15px] bg-(--color-grey-700) px-(--space-6) py-(--space-4)">
               <span className="text-caption-2 font-medium leading-tight text-(--color-white) whitespace-nowrap">
-                Ad-Lab | tools.ad-lad.io
+                Ad-Lab | tools.ad-lab.io
               </span>
             </div>
           </div>
 
-          {/* ── Two-column results card (Book frame) ── */}
+          {/* ── Split results card ── */}
           <div
             ref={containerRef}
             className="relative flex w-full select-none shadow-[0px_0px_24px_0px_rgba(226,226,226,0.25)]"
           >
-            {/* Left column — "Where you are now" */}
+
+            {/* LEFT COLUMN — Where you are now */}
             <div
               style={{ width: `${leftPct}%` }}
               className="relative flex flex-col rounded-tl-(--radius-4xl) rounded-bl-(--radius-4xl) border-[0.5px] border-(--color-surface-stroke) p-(--space-20) overflow-hidden"
@@ -116,34 +208,55 @@ function ResultsContent() {
               <div className="pointer-events-none absolute inset-0 rounded-[inherit] bg-(--color-surface-warm)" />
               <div className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0px_0px_1.8px_0px_rgba(255,255,255,0.9)]" />
 
-              {/* Current state */}
-              <div className="relative flex flex-col gap-(--space-16) pb-(--space-24)">
+              {/* Current revenue — left column leads */}
+              <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                animate="visible"
+                custom={0.15}
+                className="relative flex flex-col gap-(--space-16) pb-(--space-24)"
+              >
                 <p className="font-sans text-caption-1 font-medium leading-body text-(--color-text-heading-06)">
-                  Where you are now?
+                  Where you are now
                 </p>
                 <p className="font-display text-h4 font-medium leading-tight text-(--color-text-heading-01)">
-                  {fmtMonth(results.currentRevenue)}
+                  <AnimatedNumber
+                    target={results.currentRevenue}
+                    suffix="/mo"
+                    delay={0.3}
+                    duration={1.4}
+                  />
                 </p>
                 <p className="font-sans text-caption-1 font-medium leading-body text-(--color-text-heading-06)">
-                  At {roasRaw}x ROAS on {fmt(adSpendRaw)}/mo
+                  At {roasRaw}x ROAS on ${fmtRaw(adSpendRaw)}/mo
                 </p>
-              </div>
+              </motion.div>
 
               {/* Divider */}
               <div className="relative border-t-[0.8px] border-(--color-surface-stroke)" />
 
               {/* Annual projection */}
-              <div className="relative flex flex-col gap-(--space-16) pt-(--space-24)">
+              <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                animate="visible"
+                custom={0.3}
+                className="relative flex flex-col gap-(--space-16) pt-(--space-24)"
+              >
                 <p className="font-sans text-caption-1 font-medium leading-body text-(--color-text-heading-01)">
                   Annual projection
                 </p>
                 <p className="font-display text-h4 font-medium leading-tight text-(--color-text-heading-01)">
-                  {fmt(annualCurrentRevenue)}
+                  <AnimatedNumber
+                    target={annualCurrentRevenue}
+                    delay={0.45}
+                    duration={1.5}
+                  />
                 </p>
-              </div>
+              </motion.div>
             </div>
 
-            {/* Right column — "Where Ad-Lab clients are" */}
+            {/* RIGHT COLUMN — Where Ad-Lab clients are */}
             <div
               style={{ width: `${100 - leftPct}%` }}
               className="relative flex flex-col gap-(--space-18) rounded-tr-(--radius-4xl) rounded-br-(--radius-4xl) border-[0.5px] border-(--color-surface-stroke) pl-(--space-40) pr-(--space-20) py-(--space-20) overflow-hidden"
@@ -151,70 +264,133 @@ function ResultsContent() {
               <div className="pointer-events-none absolute inset-0 rounded-[inherit] bg-(--color-surface-dashboard)" />
               <div className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0px_0px_1.8px_0px_rgba(255,250,250,0.9)]" />
 
-              {/* Projected state */}
-              <div className="relative flex flex-col gap-(--space-16) pb-(--space-24)">
+              {/* Projected revenue — right column follows left */}
+              <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                animate="visible"
+                custom={0.45}
+                className="relative flex flex-col gap-(--space-16) pb-(--space-24)"
+              >
                 <p className="font-sans text-caption-1 font-medium leading-body text-(--color-text-heading-06)">
                   Where Ad-Lab clients like you are
                 </p>
                 <p className="font-display text-h4 font-medium leading-tight text-(--color-text-heading-01)">
-                  {fmtMonth(results.projectedRevenue)}
+                  <AnimatedNumber
+                    target={results.projectedRevenue}
+                    suffix="/mo"
+                    delay={0.6}
+                    duration={1.8}
+                  />
                 </p>
-                <div className="flex flex-col gap-(--space-8)">
+
+                {/* Gap line — the money shot */}
+                <motion.div
+                  variants={fadeUp}
+                  initial="hidden"
+                  animate="visible"
+                  custom={0.6}
+                  className="flex flex-col gap-(--space-8)"
+                >
                   <p className="font-sans text-caption-1 font-medium leading-body text-(--color-text-heading-06)">
                     That&apos;s{' '}
-                    <span className="text-(--color-text-heading-02)">{fmt(results.monthlyGap)}</span>
+                    <span className="text-(--color-text-heading-02)">
+                      <AnimatedNumber
+                        target={results.monthlyGap}
+                        delay={0.75}
+                        duration={1.8}
+                      />
+                    </span>
                     {' '}you&apos;re not making every month.
                   </p>
                   {results.annualGap > 0 && (
                     <p className="font-sans text-caption-2 font-medium leading-tight text-(--color-grey-500)">
-                      Over a year: {fmt(results.annualGap)} in your competitor&apos;s pocket
+                      Over a year:{' '}
+                      <AnimatedNumber
+                        target={results.annualGap}
+                        delay={0.9}
+                        duration={2.0}
+                        className="text-(--color-text-heading-05)"
+                      />{' '}
+                      staying in your competitor&apos;s pocket
                     </p>
                   )}
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
 
-              {/* Insights card + CTAs */}
-              <div className="relative flex flex-col gap-(--space-32)">
-
-                {/* Insights notification card */}
-                <div className="rounded-(--radius-3xl) bg-(--color-surface-fg-01) shadow-(--shadow-xs)">
+              {/* AI Insight card — always visible, no fade wrapper */}
+              <div className="flex flex-col gap-(--space-32)">
+                {/* Outer grey wrapper */}
+                <div className="rounded-(--radius-3xl) bg-(--color-surface-fg-01) shadow-(--shadow-surface)">
+                  {/* Tag row */}
                   <div className="px-(--space-10) py-(--space-8)">
-                    <div className="inline-flex items-center justify-center rounded-[15px] bg-(--color-grey-700) px-(--space-6) py-(--space-4)">
+                    <div className="inline-flex items-center gap-(--space-6) rounded-[15px] bg-(--color-grey-700) px-(--space-6) py-(--space-4)">
+                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 0.5L6.03 3.47L9 4.5L6.03 5.53L5 8.5L3.97 5.53L1 4.5L3.97 3.47L5 0.5Z" fill="white" fillOpacity="0.8"/>
+                        <path d="M8.5 0L9.03 1.47L10.5 2L9.03 2.53L8.5 4L7.97 2.53L6.5 2L7.97 1.47L8.5 0Z" fill="white" fillOpacity="0.5"/>
+                      </svg>
                       <span className="text-caption-3 font-medium leading-tight text-(--color-white) whitespace-nowrap">
                         Ad-Lab | Insights
                       </span>
                     </div>
                   </div>
-                  <div className="relative overflow-hidden rounded-(--radius-3xl) border-[0.647px] border-(--color-surface-stroke) px-(--space-10) py-(--space-12) shadow-(--shadow-float)">
-                    <div className="pointer-events-none absolute inset-0 rounded-[inherit] bg-(--color-surface-primary)" />
-                    <p className="relative font-sans text-caption-2 font-normal leading-tight text-(--color-text-body)">
-                      {insight}
-                    </p>
-                    <div className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0px_2.59px_2.59px_0px_rgba(246,246,246,0.25)]" />
+                  {/* Padded wrapper so grey shows on left, right and bottom */}
+                  <div className="px-(--space-10) pb-(--space-10)">
+                    <div className="relative overflow-hidden rounded-(--radius-3xl) border border-(--color-surface-stroke) bg-(--color-surface-primary) px-(--space-10) py-(--space-12) shadow-(--shadow-float)">
+                      <div className="relative">
+                        {insight ? (
+                          <motion.p
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.5, ease: 'easeOut' }}
+                            className="font-sans text-caption-2 font-normal leading-tight text-(--color-text-body)"
+                          >
+                            {insight}
+                          </motion.p>
+                        ) : insightError ? (
+                          <p className="font-sans text-caption-2 font-normal leading-tight text-(--color-text-body)">
+                            At {roasRaw}x ROAS, you&apos;re leaving{' '}
+                            <strong>${fmtRaw(results.monthlyGap)}</strong> on the table every month.
+                            Ad-Lab clients at your spend level consistently reach 8.78x within 90 days.
+                            That gap is fixable.
+                          </p>
+                        ) : (
+                          <InsightSkeleton />
+                        )}
+                      </div>
+                      <div className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0px_2.59px_2.59px_0px_rgba(246,246,246,0.25)]" />
+                    </div>
                   </div>
                 </div>
 
                 {/* CTA buttons */}
-                <div className="flex flex-col gap-(--space-12)">
-                  <button
-                    type="button"
-                    className="relative w-full overflow-hidden rounded-(--radius-lg) border-[0.8px] border-(--color-white) px-(--space-12) py-(--space-12) text-center text-caption-1 font-medium leading-tight text-(--color-btn-primary-text) shadow-(--shadow-soft)"
+                <motion.div
+                  initial={{ opacity: 0, filter: 'blur(4px)', y: 6 }}
+                  animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
+                  transition={{ delay: 1.15, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                  className="flex flex-col gap-(--space-12)"
+                >
+                  <a
+                    href={bookingUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="relative block w-full overflow-hidden rounded-(--radius-lg) border-[0.8px] border-(--color-white) px-(--space-12) py-(--space-12) text-center text-caption-1 font-medium leading-tight text-(--color-btn-primary-text) shadow-(--shadow-soft) transition-opacity duration-150 hover:opacity-90 active:opacity-80"
                   >
                     <div className="pointer-events-none absolute inset-0 rounded-[inherit] bg-(--color-btn-primary-bg)" />
-                    <span className="relative">Book a call — 2/9 slots left</span>
+                    <span className="relative">🗓 Book a call — 2/9 spots left</span>
                     <div className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0px_1.5px_2px_0px_rgba(0,0,0,0.08)]" />
-                  </button>
-                  <button
-                    type="button"
-                    className="w-full rounded-(--radius-lg) bg-(--color-btn-dark-bg) px-(--space-12) py-(--space-12) text-center text-caption-2 font-medium leading-tight text-(--color-white) shadow-(--shadow-soft)"
+                  </a>
+                  <a
+                    href="/grader"
+                    className="block w-full rounded-(--radius-lg) bg-(--color-btn-dark-bg) px-(--space-12) py-(--space-12) text-center text-caption-2 font-medium leading-tight text-(--color-white) shadow-(--shadow-soft) transition-opacity duration-150 hover:opacity-85 active:opacity-75"
                   >
-                    Grade my Google Ads account
-                  </button>
-                </div>
+                    🔍 Grade my Google Ads account
+                  </a>
+                </motion.div>
               </div>
             </div>
 
-            {/* ── Panel move handle ── */}
+            {/* ── Panel drag handle ── */}
             <div
               onMouseDown={handleDragStart}
               style={{ left: `${leftPct}%`, top: '50%', transform: 'translate(-50%, -50%)' }}
