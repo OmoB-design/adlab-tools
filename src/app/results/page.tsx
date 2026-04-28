@@ -217,7 +217,7 @@ function ResultsContent() {
                 className="relative flex flex-col gap-(--space-16) pb-(--space-24)"
               >
                 <p className="font-sans text-caption-1 font-medium leading-body text-(--color-text-heading-06)">
-                  Where you are now
+                  Where you are now?
                 </p>
                 <p className="font-display text-h4 font-medium leading-tight text-(--color-text-heading-01)">
                   <AnimatedNumber
@@ -259,7 +259,7 @@ function ResultsContent() {
             {/* RIGHT COLUMN — Where Ad-Lab clients are */}
             <div
               style={{ width: `${100 - leftPct}%` }}
-              className="relative flex flex-col gap-(--space-18) rounded-tr-(--radius-4xl) rounded-br-(--radius-4xl) border-[0.5px] border-(--color-surface-stroke) pl-(--space-40) pr-(--space-20) py-(--space-20) overflow-hidden"
+              className="relative flex flex-col gap-(--space-18) rounded-tr-(--radius-4xl) rounded-br-(--radius-4xl) border-[0.5px] border-(--color-surface-stroke) pl-(--space-40) pr-(--space-20) py-(--space-20)"
             >
               <div className="pointer-events-none absolute inset-0 rounded-[inherit] bg-(--color-surface-dashboard)" />
               <div className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0px_0px_1.8px_0px_rgba(255,250,250,0.9)]" />
@@ -312,14 +312,14 @@ function ResultsContent() {
                         duration={2.0}
                         className="text-(--color-text-heading-05)"
                       />{' '}
-                      staying in your competitor&apos;s pocket
+                      in your competitor&apos;s pocket
                     </p>
                   )}
                 </motion.div>
               </motion.div>
 
               {/* AI Insight card — always visible, no fade wrapper */}
-              <div className="flex flex-col gap-(--space-32)">
+              <div className="relative flex flex-col gap-(--space-32)">
                 {/* Outer grey wrapper */}
                 <div className="rounded-(--radius-3xl) bg-(--color-surface-fg-01) shadow-(--shadow-surface)">
                   {/* Tag row */}

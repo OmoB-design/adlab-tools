@@ -31,10 +31,11 @@ function PlatformContent() {
   const adSpend = searchParams.get('adSpend') ?? '0'
   const roas    = searchParams.get('roas')    ?? '0'
 
-  const [selected, setSelected] = useState<Platform>('both')
+  const [selected, setSelected] = useState<Platform | null>(null)
   const router = useRouter()
 
   const handleNext = () => {
+    if (!selected) return
     router.push(`/details?adSpend=${adSpend}&roas=${roas}&platform=${selected}`)
   }
 
@@ -145,7 +146,8 @@ function PlatformContent() {
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="animate-fade-in-up w-full rounded-(--radius-lg) bg-(--color-btn-primary-bg) px-(--space-12) py-(--space-14) text-caption-1 font-medium leading-tight text-(--color-btn-primary-text) shadow-(--shadow-soft) transition-shadow duration-150 active:shadow-(--shadow-inset-sm)"
+                  disabled={!selected}
+                  className={`animate-fade-in-up w-full rounded-(--radius-lg) bg-(--color-btn-primary-bg) px-(--space-12) py-(--space-14) text-caption-1 font-medium leading-tight text-(--color-btn-primary-text) shadow-(--shadow-soft) transition-all duration-150 active:shadow-(--shadow-inset-sm) ${!selected ? 'opacity-40 cursor-not-allowed' : ''}`}
                   style={{ animationDelay: '0.60s' }}
                 >
                   Next

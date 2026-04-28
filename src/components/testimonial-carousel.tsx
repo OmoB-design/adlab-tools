@@ -212,17 +212,13 @@ export function TestimonialCarousel() {
         transition={isSliding ? slideTrans : snapTrans}
         style={{ display: 'flex', gap: 16, height: CARD_HEIGHT }}
       >
-        {/* Slot 0 — left: always de-focused */}
-        <motion.div style={{ width: cardWidth, flexShrink: 0, scaleY: 0.88, originY: 0.5 }}>
+        {/* Slot 0 — left */}
+        <div style={{ width: cardWidth, flexShrink: 0 }}>
           <TestiCard t={testimonials[prevIdx]} />
-        </motion.div>
+        </div>
 
-        {/* Slot 1 — center: shrinks as it leaves focus during slide */}
-        <motion.div
-          animate={{ scaleY: isSliding ? 0.88 : 1 }}
-          transition={isSliding ? slideTrans : snapTrans}
-          style={{ width: cardWidth, flexShrink: 0, originY: 0.5 }}
-        >
+        {/* Slot 1 — center */}
+        <div style={{ width: cardWidth, flexShrink: 0 }}>
           {isLoading ? (
             <SkeletonCard sweep />
           ) : (
@@ -231,21 +227,17 @@ export function TestimonialCarousel() {
               <TestiCard t={testimonials[idx]} revealing />
             </div>
           )}
-        </motion.div>
+        </div>
 
-        {/* Slot 2 — right: expands into focus as it slides to center */}
-        <motion.div
-          animate={{ scaleY: isSliding ? 1 : 0.88 }}
-          transition={isSliding ? slideTrans : snapTrans}
-          style={{ width: cardWidth, flexShrink: 0, originY: 0.5 }}
-        >
+        {/* Slot 2 — right */}
+        <div style={{ width: cardWidth, flexShrink: 0 }}>
           <SkeletonCard />
-        </motion.div>
+        </div>
 
-        {/* Slot 3 — off-screen right: always de-focused */}
-        <motion.div style={{ width: cardWidth, flexShrink: 0, scaleY: 0.88, originY: 0.5 }}>
+        {/* Slot 3 — off-screen right */}
+        <div style={{ width: cardWidth, flexShrink: 0 }}>
           <SkeletonCard />
-        </motion.div>
+        </div>
       </motion.div>
 
       {/* ── Edge fades ────────────────────────────────────────── */}
