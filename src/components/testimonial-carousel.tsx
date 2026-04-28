@@ -72,7 +72,7 @@ function Skel({ className, shimmer = false }: { className?: string; shimmer?: bo
 // sweep=true  → content bars shimmer; footer is always static
 function SkeletonCard({ sweep = false }: { sweep?: boolean }) {
   return (
-    <div className="h-full flex flex-col bg-(--color-surface-fg-01) rounded-tl-[24px] rounded-tr-[24px] rounded-bl-[18px] rounded-br-[18px] shadow-(--shadow-surface)">
+    <div className="flex flex-col bg-(--color-surface-fg-01) rounded-tl-[24px] rounded-tr-[24px] rounded-bl-[18px] rounded-br-[18px] shadow-(--shadow-surface)">
       <div className="border border-(--color-surface-stroke) rounded-[18px] p-3 overflow-hidden relative bg-(--color-surface-primary) flex flex-col">
         <div className="flex gap-1.5 items-start">
           <Skel shimmer={sweep} className="size-[30px] flex-none rounded-full" />
@@ -102,7 +102,7 @@ function TestiCard({ t, revealing = false }: { t: (typeof testimonials)[0]; reve
     : {}
 
   return (
-    <div className="h-full flex flex-col bg-(--color-surface-fg-01) border border-(--color-surface-stroke) rounded-tl-[24px] rounded-tr-[24px] rounded-bl-[18px] rounded-br-[18px] shadow-[0px_4px_15px_0px_rgba(0,0,0,0.05),0px_0px_6.9px_0px_rgba(204,204,204,0.25),0px_1px_2px_0px_rgba(16,24,40,0.05)]">
+    <div className="flex flex-col bg-(--color-surface-fg-01) border border-(--color-surface-stroke) rounded-tl-[24px] rounded-tr-[24px] rounded-bl-[18px] rounded-br-[18px] shadow-[0px_4px_15px_0px_rgba(0,0,0,0.05),0px_0px_6.9px_0px_rgba(204,204,204,0.25),0px_1px_2px_0px_rgba(16,24,40,0.05)]">
       <div className="border border-(--color-surface-stroke) rounded-[18px] p-3 overflow-hidden relative bg-(--color-surface-primary) flex flex-col">
         <div className="flex items-start gap-1.5">
           <motion.img
@@ -201,13 +201,13 @@ export function TestimonialCarousel() {
       initial={{ opacity: 0 }}
       animate={{ opacity: cardWidth > 0 ? 1 : 0 }}
       transition={{ duration: 0.3 }}
-      style={{ height: CARD_HEIGHT + 20, paddingTop: 10, paddingBottom: 10 }}
+      style={{ paddingTop: 10, paddingBottom: 10 }}
     >
       {/* ── 4-card track — Framer Motion drives the translateX ───── */}
       <motion.div
         animate={{ x: isSliding ? -slideOffset : 0 }}
         transition={isSliding ? slideTrans : snapTrans}
-        style={{ display: 'flex', gap: 16, height: CARD_HEIGHT }}
+        style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}
       >
         {/* Slot 0 — left */}
         <div style={{ width: cardWidth, flexShrink: 0 }}>
@@ -220,7 +220,7 @@ export function TestimonialCarousel() {
             <SkeletonCard sweep />
           ) : (
             // key remounts TestiCard each cycle — Framer Motion replays from initial
-            <div key={idx} className="h-full">
+            <div key={idx}>
               <TestiCard t={testimonials[idx]} revealing />
             </div>
           )}
