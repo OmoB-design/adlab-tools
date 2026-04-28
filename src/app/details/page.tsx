@@ -157,15 +157,15 @@ function DetailsContent() {
                   <button
                     type="button"
                     onClick={() => setConsented(!consented)}
-                    className="flex items-start gap-(--space-10)"
+                    className="flex items-center gap-(--space-10)"
                   >
                     {consented ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18" className="mt-[1px] flex-none">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18" className="flex-none">
                         <polyline points="5.75 9.25 8 11.75 12.25 6.25" fill="none" stroke="#1c1f21" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"/>
                         <rect x="2.75" y="2.75" width="12.5" height="12.5" rx="2" ry="2" fill="none" stroke="#1c1f21" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"/>
                       </svg>
                     ) : (
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18" className="mt-[1px] flex-none">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18" className="flex-none">
                         <rect x="2.75" y="2.75" width="12.5" height="12.5" rx="2" ry="2" fill="none" stroke="#1c1f21" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"/>
                       </svg>
                     )}

@@ -73,7 +73,7 @@ function Skel({ className, shimmer = false }: { className?: string; shimmer?: bo
 function SkeletonCard({ sweep = false }: { sweep?: boolean }) {
   return (
     <div className="h-full flex flex-col bg-(--color-surface-fg-01) rounded-tl-[24px] rounded-tr-[24px] rounded-bl-[18px] rounded-br-[18px] shadow-(--shadow-surface)">
-      <div className="flex-1 border border-(--color-surface-stroke) rounded-[18px] p-3 overflow-hidden relative bg-(--color-surface-primary) flex flex-col">
+      <div className="border border-(--color-surface-stroke) rounded-[18px] p-3 overflow-hidden relative bg-(--color-surface-primary) flex flex-col">
         <div className="flex gap-1.5 items-start">
           <Skel shimmer={sweep} className="size-[30px] flex-none rounded-full" />
           <div className="flex flex-col gap-1 flex-1 pt-0.5">
@@ -85,14 +85,9 @@ function SkeletonCard({ sweep = false }: { sweep?: boolean }) {
           <Skel shimmer={sweep} className="h-2 w-full" />
           <Skel shimmer={sweep} className="h-[7px] w-[190px]" />
         </div>
-        <div className="flex-1" />
         <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_0px_2px_1.5px_white]" />
       </div>
-      <div className="flex items-center justify-between px-3 py-2">
-        <div className="flex items-center gap-[3.5px]">
-          <Skel className="size-[25px] rounded-full flex-none" />
-          <Skel className="h-[8px] w-[60px]" />
-        </div>
+      <div className="flex items-center justify-end px-3 py-2">
         <Skel className="h-[25px] w-[84px] rounded-[10px]" />
       </div>
     </div>
@@ -108,7 +103,7 @@ function TestiCard({ t, revealing = false }: { t: (typeof testimonials)[0]; reve
 
   return (
     <div className="h-full flex flex-col bg-(--color-surface-fg-01) border border-(--color-surface-stroke) rounded-tl-[24px] rounded-tr-[24px] rounded-bl-[18px] rounded-br-[18px] shadow-[0px_4px_15px_0px_rgba(0,0,0,0.05),0px_0px_6.9px_0px_rgba(204,204,204,0.25),0px_1px_2px_0px_rgba(16,24,40,0.05)]">
-      <div className="flex-1 border border-(--color-surface-stroke) rounded-[18px] p-3 overflow-hidden relative bg-(--color-surface-primary) flex flex-col">
+      <div className="border border-(--color-surface-stroke) rounded-[18px] p-3 overflow-hidden relative bg-(--color-surface-primary) flex flex-col">
         <div className="flex items-start gap-1.5">
           <motion.img
             {...r(0)}
@@ -136,20 +131,9 @@ function TestiCard({ t, revealing = false }: { t: (typeof testimonials)[0]; reve
         >
           {t.quote}
         </motion.p>
-        <div className="flex-1" />
         <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_0px_2px_1.5px_white]" />
       </div>
-      <motion.div {...r(0.22)} className="flex items-center justify-between px-3 py-2">
-        <div className="flex items-center gap-[3.5px]">
-          <img
-            src={t.avatar}
-            alt={t.name}
-            className="size-[25px] flex-none rounded-full object-cover"
-          />
-          <span className="text-[10px] font-medium leading-[1.2] text-(--color-text-body) whitespace-nowrap">
-            {t.company}
-          </span>
-        </div>
+      <motion.div {...r(0.22)} className="flex items-center justify-end px-3 py-2">
         <a
           href="https://www.ad-lab.io/"
           target="_blank"
@@ -214,6 +198,7 @@ export function TestimonialCarousel() {
     <motion.div
       ref={containerRef}
       className="relative w-full overflow-hidden"
+      initial={{ opacity: 0 }}
       animate={{ opacity: cardWidth > 0 ? 1 : 0 }}
       transition={{ duration: 0.3 }}
       style={{ height: CARD_HEIGHT + 20, paddingTop: 10, paddingBottom: 10 }}
