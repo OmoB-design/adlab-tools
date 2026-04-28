@@ -8,21 +8,21 @@ const testimonials = [
     name: 'Aiden Hodges',
     role: 'Director, Driven Off Road',
     company: 'Driven Off Road',
-    quote: "I've previously used other companies to boost my Google Ads and didn't get the results I expected...",
+    quote: "I've previously used other companies to boost my Google Ads and didn't receive the results I expected. I was just about to give up but found AdLab and got instant results. I haven't looked back!",
     avatar: 'https://cdn.prod.website-files.com/667ea7e37c1a688a520d6b30/667ea7e37c1a688a520d6bba_Aiden.webp',
   },
   {
     name: 'Laz Smith',
     role: 'Co-Founder, Apero The Label',
     company: 'Apero The Label',
-    quote: "We'd never used an agency for Google Ads before, but Ad Lab is professional and knows the stuff...",
+    quote: "We'd never used an agency for Google Ads before, but Ad Lab was recommended by a trusted partner and was super up-front and professional. Definitely knows the stuff — highly recommend.",
     avatar: 'https://cdn.prod.website-files.com/667ea7e37c1a688a520d6b30/667ea7e37c1a688a520d6bb9_Laz.webp',
   },
   {
     name: 'Jez Hedger',
     role: 'Co-Founder, Bedzy',
     company: 'Bedzy',
-    quote: "Until I was introduced to Adlab, I was yet to discover an agency that could beat my own ads...",
+    quote: "Until I was introduced to Adlab, I was yet to discover an agency who could beat my own performance. They conducted a thorough audit, saw many opportunities, and before long we were beating all sales records.",
     avatar: 'https://cdn.prod.website-files.com/667ea7e37c1a688a520d6b30/667ea7e37c1a688a520d6bbb_Jez.webp',
   },
 ]
@@ -72,7 +72,7 @@ function Skel({ className, shimmer = false }: { className?: string; shimmer?: bo
 // sweep=true  → content bars shimmer; footer is always static
 function SkeletonCard({ sweep = false }: { sweep?: boolean }) {
   return (
-    <div className="flex flex-col bg-(--color-surface-fg-01) rounded-tl-[24px] rounded-tr-[24px] rounded-bl-[18px] rounded-br-[18px] shadow-(--shadow-surface)">
+    <div className="h-full flex flex-col bg-(--color-surface-fg-01) rounded-tl-[24px] rounded-tr-[24px] rounded-bl-[18px] rounded-br-[18px] shadow-(--shadow-surface)">
       <div className="border border-(--color-surface-stroke) rounded-[18px] p-3 overflow-hidden relative bg-(--color-surface-primary) flex flex-col">
         <div className="flex gap-1.5 items-start">
           <Skel shimmer={sweep} className="size-[30px] flex-none rounded-full" />
@@ -102,7 +102,7 @@ function TestiCard({ t, revealing = false }: { t: (typeof testimonials)[0]; reve
     : {}
 
   return (
-    <div className="flex flex-col bg-(--color-surface-fg-01) border border-(--color-surface-stroke) rounded-tl-[24px] rounded-tr-[24px] rounded-bl-[18px] rounded-br-[18px] shadow-[0px_4px_15px_0px_rgba(0,0,0,0.05),0px_0px_6.9px_0px_rgba(204,204,204,0.25),0px_1px_2px_0px_rgba(16,24,40,0.05)]">
+    <div className="h-full flex flex-col bg-(--color-surface-fg-01) border border-(--color-surface-stroke) rounded-tl-[24px] rounded-tr-[24px] rounded-bl-[18px] rounded-br-[18px] shadow-[0px_4px_15px_0px_rgba(0,0,0,0.05),0px_0px_6.9px_0px_rgba(204,204,204,0.25),0px_1px_2px_0px_rgba(16,24,40,0.05)]">
       <div className="border border-(--color-surface-stroke) rounded-[18px] p-3 overflow-hidden relative bg-(--color-surface-primary) flex flex-col">
         <div className="flex items-start gap-1.5">
           <motion.img
@@ -207,7 +207,7 @@ export function TestimonialCarousel() {
       <motion.div
         animate={{ x: isSliding ? -slideOffset : 0 }}
         transition={isSliding ? slideTrans : snapTrans}
-        style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}
+        style={{ display: 'flex', gap: 16 }}
       >
         {/* Slot 0 — left */}
         <div style={{ width: cardWidth, flexShrink: 0 }}>
