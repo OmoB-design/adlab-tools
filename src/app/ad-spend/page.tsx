@@ -116,7 +116,7 @@ export default function AdSpendPage() {
                     value={adSpend}
                     onChange={(e) => setAdSpend(e.target.value)}
                     placeholder="Enter amount"
-                    className="flex-1 bg-transparent text-body font-medium leading-tight text-(--color-text-heading-02) outline-none placeholder:text-(--color-grey-400)"
+                    className="flex-1 bg-transparent text-caption-1 font-medium leading-tight text-(--color-text-heading-02) outline-none placeholder:text-(--color-grey-400)"
                   />
                 </div>
 

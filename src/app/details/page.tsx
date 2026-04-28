@@ -124,7 +124,7 @@ function DetailsContent() {
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         placeholder="Your name"
-                        className="flex-1 bg-transparent text-caption-2 font-medium leading-tight text-(--color-text-heading-02) outline-none placeholder:text-(--color-grey-400)"
+                        className="flex-1 bg-transparent text-caption-1 font-medium leading-tight text-(--color-text-heading-02) outline-none placeholder:text-(--color-grey-400)"
                       />
                     </div>
                   </div>
@@ -144,7 +144,7 @@ function DetailsContent() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Email@yourbrand.com"
-                        className="flex-1 bg-transparent text-caption-2 font-medium leading-tight text-(--color-text-heading-02) outline-none placeholder:text-(--color-grey-400)"
+                        className="flex-1 bg-transparent text-caption-1 font-medium leading-tight text-(--color-text-heading-02) outline-none placeholder:text-(--color-grey-400)"
                       />
                     </div>
                   </div>
