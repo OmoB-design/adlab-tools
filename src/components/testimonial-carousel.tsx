@@ -83,7 +83,8 @@ function SkeletonCard({ sweep = false }: { sweep?: boolean }) {
         </div>
         <div className="mt-4 flex flex-col gap-1">
           <Skel shimmer={sweep} className="h-2 w-full" />
-          <Skel shimmer={sweep} className="h-[7px] w-[190px]" />
+          <Skel shimmer={sweep} className="h-2 w-full" />
+          <Skel shimmer={sweep} className="h-2 w-[70%]" />
         </div>
         <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_0px_2px_1.5px_white]" />
       </div>
@@ -127,7 +128,7 @@ function TestiCard({ t, revealing = false }: { t: (typeof testimonials)[0]; reve
             animate:    { opacity: 1, y: 0,  filter: 'blur(0px)' },
             transition: { duration: 0.547, ease: [0.22, 1, 0.36, 1] as [number,number,number,number], delay: 0.13 },
           } : {})}
-          className="mt-4 text-[10px] font-medium leading-[1.2] text-(--color-text-heading-04) text-pretty"
+          className="mt-4 text-[10px] font-medium leading-[1.2] text-(--color-text-heading-04) line-clamp-3"
         >
           {t.quote}
         </motion.p>
