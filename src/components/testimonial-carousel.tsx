@@ -3,37 +3,27 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 
-const AVATAR =
-  'https://www.figma.com/api/mcp/asset/1b21583c-6ef4-4d46-b093-c39eb57e81b7'
-
 const testimonials = [
   {
-    name: 'Sarah J. Benson',
-    role: 'Media buyer',
-    quote: 'With Ad-lab, i was able to scale my business and know the right things to do.',
-    company: 'The Mental Inc.',
-    avatar: AVATAR,
+    name: 'Aiden Hodges',
+    role: 'Director, Driven Off Road',
+    quote: "I've previously used other companies to boost my Google Ads and didn't receive the results I expected for the money I was investing. I was just about to give up but thought I'd give one more company a go and found AdLab and got instant results. I haven't looked back!",
+    company: 'Driven Off Road',
+    avatar: 'https://cdn.prod.website-files.com/667ea7e37c1a688a520d6b30/667ea7e37c1a688a520d6bba_Aiden.webp',
   },
   {
-    name: 'Marcus T. Reid',
-    role: 'Growth Strategist',
-    quote: 'The ROAS insights alone saved us $12k in the first month. Incredible tool.',
-    company: 'Apex Digital Co.',
-    avatar: AVATAR,
+    name: 'Laz Smith',
+    role: 'Co-Founder, Apero The Label',
+    quote: "We'd never used an agency for Google Ads before, but with the changes with iOS I knew this was something we couldn't ignore any longer. Ad Lab was recommended by a trusted partner and was super up-front and professional and definitely knows the stuff. Highly recommend working with Ad Lab for Google Ads.",
+    company: 'Apero The Label',
+    avatar: 'https://cdn.prod.website-files.com/667ea7e37c1a688a520d6b30/667ea7e37c1a688a520d6bb9_Laz.webp',
   },
   {
-    name: 'Priya Chandran',
-    role: 'E-commerce Director',
-    quote: 'Ad-lab transformed how we approach paid media. Our CPL dropped by 40%.',
-    company: 'Bloom Retail',
-    avatar: AVATAR,
-  },
-  {
-    name: 'Jordan Williams',
-    role: 'Performance Marketer',
-    quote: "The insights dashboard is unlike anything I've used before. Truly game-changing.",
-    company: 'NovaBrand Co.',
-    avatar: AVATAR,
+    name: 'Jez Hedger',
+    role: 'Co-Founder, Bedzy',
+    quote: "Until I was introduced to Adlab and the team, I was yet to discover an agency who could beat my own advertising performance. Adlab conducted a thorough audit of my account, and saw many opportunities for improvement so I happily handed over the keys. Before long, our business started to beat all sales records.",
+    company: 'Bedzy',
+    avatar: 'https://cdn.prod.website-files.com/667ea7e37c1a688a520d6b30/667ea7e37c1a688a520d6bbb_Jez.webp',
   },
 ]
 
@@ -42,7 +32,7 @@ const n = testimonials.length
 type Phase = 'loading' | 'populating' | 'showing' | 'sliding'
 
 // ─── Timing (ms) ───────────────────────────────────────────────
-const CARD_HEIGHT = 135
+const CARD_HEIGHT = 185
 const SWEEP_MS    = 600   // skeleton shimmer — 2 × 600 ms matches 1.2 s CSS cycle
 const SWEEP_REPS  = 2
 const REVEAL_MS   = 450   // cascade: 180 ms (last delay) + 280 ms duration + buffer
@@ -150,9 +140,14 @@ function TestiCard({ t, revealing = false }: { t: (typeof testimonials)[0]; reve
             {t.company}
           </span>
         </div>
-        <button className="bg-(--color-purple-400) rounded-lg px-[14px] py-[6px] text-[10px] font-semibold leading-[1.2] text-(--color-white) whitespace-nowrap transition-opacity duration-150 hover:opacity-90">
+        <a
+          href="https://www.ad-lab.io/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-(--color-purple-400) rounded-lg px-[14px] py-[6px] text-[10px] font-semibold leading-[1.2] text-(--color-white) whitespace-nowrap transition-opacity duration-150 hover:opacity-90"
+        >
           See testimonial
-        </button>
+        </a>
       </motion.div>
     </div>
   )
