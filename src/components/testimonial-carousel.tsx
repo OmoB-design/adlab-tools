@@ -7,19 +7,22 @@ const testimonials = [
   {
     name: 'Aiden Hodges',
     role: 'Director, Driven Off Road',
-    quote: "I've previously used other companies to boost my\nGoogle Ads and didn't get the results I expected...",
+    company: 'Driven Off Road',
+    quote: "I've previously used other companies to boost my Google Ads and didn't get the results I expected...",
     avatar: 'https://cdn.prod.website-files.com/667ea7e37c1a688a520d6b30/667ea7e37c1a688a520d6bba_Aiden.webp',
   },
   {
     name: 'Laz Smith',
     role: 'Co-Founder, Apero The Label',
-    quote: "We'd never used an agency for Google Ads before,\nbut Ad Lab is professional and knows the stuff...",
+    company: 'Apero The Label',
+    quote: "We'd never used an agency for Google Ads before, but Ad Lab is professional and knows the stuff...",
     avatar: 'https://cdn.prod.website-files.com/667ea7e37c1a688a520d6b30/667ea7e37c1a688a520d6bb9_Laz.webp',
   },
   {
     name: 'Jez Hedger',
     role: 'Co-Founder, Bedzy',
-    quote: "Until I was introduced to Adlab, I was yet\nto discover an agency that could beat my own ads...",
+    company: 'Bedzy',
+    quote: "Until I was introduced to Adlab, I was yet to discover an agency that could beat my own ads...",
     avatar: 'https://cdn.prod.website-files.com/667ea7e37c1a688a520d6b30/667ea7e37c1a688a520d6bbb_Jez.webp',
   },
 ]
@@ -85,7 +88,11 @@ function SkeletonCard({ sweep = false }: { sweep?: boolean }) {
         <div className="flex-1" />
         <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_0px_2px_1.5px_white]" />
       </div>
-      <div className="flex items-center justify-end px-3 py-2">
+      <div className="flex items-center justify-between px-3 py-2">
+        <div className="flex items-center gap-[3.5px]">
+          <Skel className="size-[25px] rounded-full flex-none" />
+          <Skel className="h-[8px] w-[60px]" />
+        </div>
         <Skel className="h-[25px] w-[84px] rounded-[10px]" />
       </div>
     </div>
@@ -118,26 +125,31 @@ function TestiCard({ t, revealing = false }: { t: (typeof testimonials)[0]; reve
             </motion.span>
           </div>
         </div>
-        <div className="mt-4">
-          {t.quote.split('\n').map((line, i) => (
-            <motion.span
-              key={i}
-              style={{ display: 'block', willChange: 'transform, opacity, filter', backfaceVisibility: 'hidden', transformOrigin: '50% 55%' }}
-              {...(revealing ? {
-                initial:    { opacity: 0, y: 17, filter: 'blur(6px)' },
-                animate:    { opacity: 1, y: 0,  filter: 'blur(0px)' },
-                transition: { duration: 0.547, ease: [0.22, 1, 0.36, 1] as [number,number,number,number], delay: 0.13 + i * 0.065 },
-              } : {})}
-              className="text-[10px] font-medium leading-[1.2] text-(--color-text-heading-04)"
-            >
-              {line}
-            </motion.span>
-          ))}
-        </div>
+        <motion.p
+          style={{ willChange: 'transform, opacity, filter' }}
+          {...(revealing ? {
+            initial:    { opacity: 0, y: 17, filter: 'blur(6px)' },
+            animate:    { opacity: 1, y: 0,  filter: 'blur(0px)' },
+            transition: { duration: 0.547, ease: [0.22, 1, 0.36, 1] as [number,number,number,number], delay: 0.13 },
+          } : {})}
+          className="mt-4 text-[10px] font-medium leading-[1.2] text-(--color-text-heading-04) text-pretty"
+        >
+          {t.quote}
+        </motion.p>
         <div className="flex-1" />
         <div className="absolute inset-0 pointer-events-none rounded-[inherit] shadow-[inset_0px_0px_2px_1.5px_white]" />
       </div>
-      <motion.div {...r(0.22)} className="flex items-center justify-end px-3 py-2">
+      <motion.div {...r(0.22)} className="flex items-center justify-between px-3 py-2">
+        <div className="flex items-center gap-[3.5px]">
+          <img
+            src={t.avatar}
+            alt={t.name}
+            className="size-[25px] flex-none rounded-full object-cover"
+          />
+          <span className="text-[10px] font-medium leading-[1.2] text-(--color-text-body) whitespace-nowrap">
+            {t.company}
+          </span>
+        </div>
         <a
           href="https://www.ad-lab.io/"
           target="_blank"

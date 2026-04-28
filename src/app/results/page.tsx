@@ -173,7 +173,7 @@ function ResultsContent() {
     dim:      true,
   }
 
-  const bookingUrl = process.env.NEXT_PUBLIC_BOOKING_URL ?? '#'
+  const bookingUrl = process.env.NEXT_PUBLIC_BOOKING_URL ?? 'https://www.ad-lab.io/#book'
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-(--color-surface-fg-01)">
@@ -324,11 +324,7 @@ function ResultsContent() {
                 <div className="rounded-(--radius-3xl) bg-(--color-surface-fg-01) shadow-(--shadow-surface)">
                   {/* Tag row */}
                   <div className="px-(--space-10) py-(--space-8)">
-                    <div className="inline-flex items-center gap-(--space-6) rounded-[15px] bg-(--color-grey-700) px-(--space-6) py-(--space-4)">
-                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M5 0.5L6.03 3.47L9 4.5L6.03 5.53L5 8.5L3.97 5.53L1 4.5L3.97 3.47L5 0.5Z" fill="white" fillOpacity="0.8"/>
-                        <path d="M8.5 0L9.03 1.47L10.5 2L9.03 2.53L8.5 4L7.97 2.53L6.5 2L7.97 1.47L8.5 0Z" fill="white" fillOpacity="0.5"/>
-                      </svg>
+                    <div className="inline-flex items-center rounded-[15px] bg-(--color-grey-700) px-(--space-6) py-(--space-4)">
                       <span className="text-caption-3 font-medium leading-tight text-(--color-white) whitespace-nowrap">
                         Ad-Lab | Insights
                       </span>
