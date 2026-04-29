@@ -87,7 +87,10 @@ export default function LeftPanel({ currentView, summary }: LeftPanelProps) {
     <>
       {/* ── Mobile top bar (hidden on md+) ──────────────────────────── */}
       <header className="flex md:hidden flex-none items-center justify-between border-b border-(--color-surface-stroke) bg-(--color-surface-fg-01) px-5 py-4">
-        <p className="font-sans text-caption-1 font-medium leading-tight text-(--color-text-body)">Ad-Lab</p>
+        <div className="flex items-center gap-1">
+          <img src="/logo.png" alt="" className="h-[1em] w-[1em] object-contain" style={{ fontSize: 'inherit' }} />
+          <p className="font-sans text-caption-1 font-medium leading-tight text-(--color-text-body)">Ad-Lab</p>
+        </div>
 
         {/* Step progress bars */}
         {mobileStep >= 0 && (
@@ -117,9 +120,10 @@ export default function LeftPanel({ currentView, summary }: LeftPanelProps) {
         <div className="flex flex-1 flex-col gap-(--space-64)">
 
           {/* Brand */}
-          <p className="font-sans text-h6 font-medium leading-tight text-(--color-text-body)">
-            Ad-Lab
-          </p>
+          <div className="flex items-center gap-1">
+            <img src="/logo.png" alt="" className="h-[1em] w-[1em] object-contain" style={{ fontSize: '19px' }} />
+            <p className="font-sans text-h6 font-medium leading-tight text-(--color-text-body)">Ad-Lab</p>
+          </div>
 
           {/* Headline */}
           <p className="font-sans text-h4 font-medium leading-tight text-(--color-text-body)">
