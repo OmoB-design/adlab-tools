@@ -141,8 +141,16 @@ function ResultsContent() {
 
   // ── Resizable split panel ──────────────────────────────────────────────────
   const [leftPct, setLeftPct] = useState(50)
+  const [isMobile, setIsMobile] = useState(false)
   const containerRef           = useRef<HTMLDivElement>(null)
   const isDragging             = useRef(false)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
@@ -176,14 +184,14 @@ function ResultsContent() {
   const bookingUrl = process.env.NEXT_PUBLIC_BOOKING_URL ?? 'https://www.ad-lab.io/#book'
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-(--color-surface-fg-01)">
+    <div className="flex flex-col md:flex-row h-screen w-full overflow-hidden bg-(--color-surface-fg-01)">
 
       <LeftPanel currentView="summary" summary={summary} />
 
       {/* Right panel — always visible, animations live only inside the split card */}
-      <main className="relative flex flex-1 flex-col overflow-hidden rounded-bl-(--radius-6xl) rounded-tl-(--radius-6xl) border border-(--color-surface-stroke) bg-(--color-surface-primary) shadow-(--shadow-panel)">
+      <main className="relative flex flex-1 flex-col overflow-hidden md:rounded-bl-(--radius-6xl) md:rounded-tl-(--radius-6xl) border border-(--color-surface-stroke) bg-(--color-surface-primary) shadow-(--shadow-panel)">
 
-        <div className="flex flex-1 flex-col items-start gap-(--space-50) overflow-y-auto px-(--space-120) pt-(--space-120) pb-(--space-64)">
+        <div className="flex flex-1 flex-col items-start gap-(--space-50) overflow-y-auto px-5 pt-8 pb-8 md:px-(--space-120) md:pt-(--space-120) md:pb-(--space-64)">
 
           {/* ── Notification tag — static ── */}
           <div className="px-(--space-0) py-(--space-12)">
@@ -197,13 +205,13 @@ function ResultsContent() {
           {/* ── Split results card ── */}
           <div
             ref={containerRef}
-            className="relative flex w-full select-none shadow-[0px_0px_24px_0px_rgba(226,226,226,0.25)]"
+            className="relative flex flex-col md:flex-row w-full select-none shadow-[0px_0px_24px_0px_rgba(226,226,226,0.25)]"
           >
 
             {/* LEFT COLUMN — Where you are now */}
             <div
-              style={{ width: `${leftPct}%` }}
-              className="relative flex flex-col rounded-tl-(--radius-4xl) rounded-bl-(--radius-4xl) border-[0.5px] border-(--color-surface-stroke) p-(--space-20) overflow-hidden"
+              style={isMobile ? undefined : { width: `${leftPct}%` }}
+              className="relative flex flex-col rounded-t-(--radius-4xl) md:rounded-t-none md:rounded-tl-(--radius-4xl) md:rounded-bl-(--radius-4xl) border-[0.5px] border-(--color-surface-stroke) p-(--space-20) overflow-hidden"
             >
               <div className="pointer-events-none absolute inset-0 rounded-[inherit] bg-(--color-surface-warm)" />
               <div className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0px_0px_1.8px_0px_rgba(255,255,255,0.9)]" />
@@ -258,8 +266,8 @@ function ResultsContent() {
 
             {/* RIGHT COLUMN — Where Ad-Lab clients are */}
             <div
-              style={{ width: `${100 - leftPct}%` }}
-              className="relative flex flex-col gap-(--space-18) rounded-tr-(--radius-4xl) rounded-br-(--radius-4xl) border-[0.5px] border-(--color-surface-stroke) pl-(--space-40) pr-(--space-20) py-(--space-20)"
+              style={isMobile ? undefined : { width: `${100 - leftPct}%` }}
+              className="relative flex flex-col gap-(--space-18) rounded-b-(--radius-4xl) md:rounded-b-none md:rounded-tr-(--radius-4xl) md:rounded-br-(--radius-4xl) border-[0.5px] border-(--color-surface-stroke) px-(--space-20) py-(--space-20) md:pl-(--space-40) md:pr-(--space-20)"
             >
               <div className="pointer-events-none absolute inset-0 rounded-[inherit] bg-(--color-surface-dashboard)" />
               <div className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0px_0px_1.8px_0px_rgba(255,250,250,0.9)]" />
@@ -386,12 +394,14 @@ function ResultsContent() {
               </div>
             </div>
 
-            {/* ── Panel drag handle ── */}
-            <div
-              onMouseDown={handleDragStart}
-              style={{ left: `${leftPct}%`, top: '50%', transform: 'translate(-50%, -50%)' }}
-              className="absolute z-10 h-[20px] w-[8px] cursor-ew-resize rounded-(--radius-2xl) border-[0.5px] border-(--color-surface-stroke) bg-(--color-surface-stroke) shadow-[0px_0px_2px_0px_rgba(155,155,155,0.25),inset_0px_2px_3px_0px_rgba(255,255,255,0.6),inset_0px_0px_2px_0px_white,inset_0px_0px_1px_0px_rgba(217,217,217,0.9)]"
-            />
+            {/* ── Panel drag handle — desktop only ── */}
+            {!isMobile && (
+              <div
+                onMouseDown={handleDragStart}
+                style={{ left: `${leftPct}%`, top: '50%', transform: 'translate(-50%, -50%)' }}
+                className="absolute z-10 h-[20px] w-[8px] cursor-ew-resize rounded-(--radius-2xl) border-[0.5px] border-(--color-surface-stroke) bg-(--color-surface-stroke) shadow-[0px_0px_2px_0px_rgba(155,155,155,0.25),inset_0px_2px_3px_0px_rgba(255,255,255,0.6),inset_0px_0px_2px_0px_white,inset_0px_0px_1px_0px_rgba(217,217,217,0.9)]"
+              />
+            )}
           </div>
         </div>
 

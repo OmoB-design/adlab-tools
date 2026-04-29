@@ -154,12 +154,16 @@ export function TestimonialCarousel() {
   const [phase, setPhase] = useState<Phase>('loading')
   const containerRef = useRef<HTMLDivElement>(null)
   const [cardWidth, setCardWidth] = useState(0)
+  const [singleCard, setSingleCard] = useState(false)
 
   // Measure usable width on mount and resize
   useEffect(() => {
     const measure = () => {
       if (containerRef.current) {
-        setCardWidth((containerRef.current.offsetWidth - 32) / 3)
+        const w = containerRef.current.offsetWidth
+        const mobile = w < 640
+        setSingleCard(mobile)
+        setCardWidth(mobile ? w : (w - 32) / 3)
       }
     }
     measure()
@@ -238,21 +242,25 @@ export function TestimonialCarousel() {
         </div>
       </motion.div>
 
-      {/* ── Edge fades ────────────────────────────────────────── */}
-      <div
-        className="absolute inset-y-0 left-0 pointer-events-none z-10"
-        style={{
-          width: Math.round(cardWidth * 0.9),
-          background: 'linear-gradient(to right, var(--color-surface-primary) 40%, transparent 100%)',
-        }}
-      />
-      <div
-        className="absolute inset-y-0 right-0 pointer-events-none z-10"
-        style={{
-          width: Math.round(cardWidth * 0.9),
-          background: 'linear-gradient(to left, var(--color-surface-primary) 40%, transparent 100%)',
-        }}
-      />
+      {/* ── Edge fades — desktop (3-card) only ─────────────── */}
+      {!singleCard && (
+        <>
+          <div
+            className="absolute inset-y-0 left-0 pointer-events-none z-10"
+            style={{
+              width: Math.round(cardWidth * 0.9),
+              background: 'linear-gradient(to right, var(--color-surface-primary) 40%, transparent 100%)',
+            }}
+          />
+          <div
+            className="absolute inset-y-0 right-0 pointer-events-none z-10"
+            style={{
+              width: Math.round(cardWidth * 0.9),
+              background: 'linear-gradient(to left, var(--color-surface-primary) 40%, transparent 100%)',
+            }}
+          />
+        </>
+      )}
     </motion.div>
   )
 }

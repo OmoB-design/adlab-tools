@@ -3,12 +3,12 @@ import { TestimonialCarousel } from '@/components/testimonial-carousel'
 
 export default function LandingPage() {
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-(--color-surface-fg-01)">
+    <div className="flex flex-col md:flex-row h-screen w-full overflow-hidden bg-(--color-surface-fg-01)">
 
       <LeftPanel currentView="landing" />
 
       {/* Right panel */}
-      <main className="relative flex flex-1 items-center justify-center overflow-hidden rounded-bl-(--radius-6xl) rounded-tl-(--radius-6xl) border border-(--color-surface-stroke) bg-(--color-surface-primary) px-(--space-40) py-(--space-40) shadow-(--shadow-panel)">
+      <main className="relative flex flex-1 items-center justify-center overflow-hidden md:rounded-bl-(--radius-6xl) md:rounded-tl-(--radius-6xl) border border-(--color-surface-stroke) bg-(--color-surface-primary) px-5 py-6 md:px-(--space-40) md:py-(--space-40) shadow-(--shadow-panel)">
 
         <div className="w-full">
           <TestimonialCarousel />
