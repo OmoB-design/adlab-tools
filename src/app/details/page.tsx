@@ -24,7 +24,7 @@ function DetailsContent() {
 
   const [fullName,  setFullName]  = useState('')
   const [email,     setEmail]     = useState('')
-  const [consented, setConsented] = useState(true)
+  const [consented, setConsented] = useState(false)
   const [loading,   setLoading]   = useState(false)
 
   const router = useRouter()
