@@ -9,21 +9,21 @@ const testimonials = [
     role: 'Director, Driven Off Road',
     company: 'Driven Off Road',
     quote: "I've previously used other companies to boost my Google Ads and didn't receive the results I expected. I was just about to give up but found AdLab and got instant results. I haven't looked back!",
-    avatar: 'https://cdn.prod.website-files.com/667ea7e37c1a688a520d6b30/667ea7e37c1a688a520d6bba_Aiden.webp',
+    avatar: '/avatars/aiden.webp',
   },
   {
     name: 'Laz Smith',
     role: 'Co-Founder, Apero The Label',
     company: 'Apero The Label',
     quote: "We'd never used an agency for Google Ads before, but Ad Lab was recommended by a trusted partner and was super up-front and professional. Definitely knows the stuff — highly recommend.",
-    avatar: 'https://cdn.prod.website-files.com/667ea7e37c1a688a520d6b30/667ea7e37c1a688a520d6bb9_Laz.webp',
+    avatar: '/avatars/laz.webp',
   },
   {
     name: 'Jez Hedger',
     role: 'Co-Founder, Bedzy',
     company: 'Bedzy',
     quote: "Until I was introduced to Adlab, I was yet to discover an agency who could beat my own performance. They conducted a thorough audit, saw many opportunities, and before long we were beating all sales records.",
-    avatar: 'https://cdn.prod.website-files.com/667ea7e37c1a688a520d6b30/667ea7e37c1a688a520d6bbb_Jez.webp',
+    avatar: '/avatars/jez.webp',
   },
 ]
 
